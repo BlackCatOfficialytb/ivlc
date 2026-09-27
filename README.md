@@ -92,9 +92,10 @@ Press `Ctrl+C` to stop playback.
 
 ### 1. Stream Extraction (`ytdlp_extract.c`)
 - Uses `posix_spawn()` for efficient process creation on iOS
-- Executes: `yt-dlp -g -f best "<youtube_url>"`
+- Executes: `yt-dlp -g -f "bv+ba/b" "<youtube_url>"`
 - `-g` = get URL only (no download)
-- `-f best` = select best quality format
+- `-f "bv+ba/b"` = prefer pre-muxed video+audio (`bv+ba`), fallback to best single stream (`b`)
+  - This avoids separate video/audio URLs for 1080p+ where YouTube serves split streams
 - Captures stdout via pipe, returns allocated URL string
 
 ### 2. LibVLC Pipeline (`main.c`)

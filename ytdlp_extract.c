@@ -31,10 +31,11 @@ char *extract_stream_url(const char *youtube_url) {
         NULL
     };
 
-    // Command: yt-dlp -g -f best "<url>"
+    // Command: yt-dlp -g -f "bv+ba/b" "<url>"
     // -g: get URL only (don't download)
-    // -f best: select best quality format
-    const char *args[] = { "yt-dlp", "-g", "-f", "best", youtube_url, NULL };
+    // -f "bv+ba/b": prefer pre-muxed (bv+ba = best video+audio merged, fallback to best single)
+    // This avoids separate video/audio URLs for 1080p+ by preferring merged formats
+    const char *args[] = { "yt-dlp", "-g", "-f", "bv+ba/b", youtube_url, NULL };
 
     pid_t pid;
     int pipefd[2];
