@@ -1,0 +1,40 @@
+# Build artifacts
+*.o
+*.obj
+*.exe
+*.out
+*.bin
+ivlc
+
+# Static libraries (downloaded/built locally)
+lib/*.a
+lib/*.lib
+
+# Theos build
+.theos/
+obj/
+packages/
+
+# Debian package
+*.deb
+*.ddeb
+*.buildinfo
+*.changes
+
+# IDE/Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
