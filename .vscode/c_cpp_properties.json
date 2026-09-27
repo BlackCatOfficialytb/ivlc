@@ -1,0 +1,29 @@
+{
+    "configurations": [
+        {
+            "name": "iOS arm64 (Cross-compile from Windows)",
+            "includePath": [
+                "${workspaceFolder}/include",
+                "${workspaceFolder}/lib"
+            ],
+            "defines": [
+                "__arm64__",
+                "__APPLE__",
+                "__IOS__",
+                "TARGET_OS_IOS=1",
+                "_POSIX_C_SOURCE=200809L"
+            ],
+            "compilerPath": "clang",
+            "cStandard": "c99",
+            "intelliSenseMode": "linux-clang-x64",
+            "browse": {
+                "path": [
+                    "${workspaceFolder}/include",
+                    "${workspaceFolder}/lib"
+                ],
+                "limitSymbolsToIncludedHeaders": true
+            }
+        }
+    ],
+    "version": 4
+}
