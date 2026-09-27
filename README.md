@@ -138,6 +138,41 @@ libvlc_media_player_play(mp);
 while (g_running) { sleep(1); }
 ```
 
+## CI/CD (GitHub Actions)
+
+### Automated LibVLC Build
+**Workflow:** `.github/workflows/build-libvlc.yml`
+
+Triggers on `workflow_dispatch` (manual) or push to main. Runs on `macos-14`:
+1. Checks out `videolan/vlc` source
+2. Builds static `libvlc.a` + `libvlccore.a` for iOS arm64 via `extras/package/ios/build.sh`
+3. Uploads artifacts (libs + headers)
+4. Builds iVLC binary using Theos
+5. Creates GitHub Release with all artifacts
+
+```bash
+# Trigger manually
+gh workflow run build-libvlc.yml
+```
+
+### Continuous Integration
+**Workflow:** `.github/workflows/ci.yml`
+
+Runs on every push/PR:
+- **Lint**: `clang-tidy` on source files
+- **Linux Build**: Native x86_64 test build with system VLC
+- **iOS Simulator Build**: arm64 simulator build with Homebrew VLC
+
+```bash
+# View CI status
+gh run list --workflow=ci.yml
+```
+
+### Artifacts
+Each workflow run produces downloadable artifacts:
+- `libvlc-ios-arm64` - Static libraries + headers
+- `ivlc-ios-arm64` - iVLC binary
+
 ## Debian Package
 
 Build `.deb` for installation on device:

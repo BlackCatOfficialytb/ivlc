@@ -5,6 +5,8 @@
 *.out
 *.bin
 ivlc
+ivlc-test
+ivlc-sim
 
 # Static libraries (downloaded/built locally)
 lib/*.a
@@ -38,4 +40,12 @@ Thumbs.db
 # Temporary files
 *.tmp
 *.temp
+
+# GitHub Actions artifacts
+.github/workflows/*.yml
+!/.github/workflows/build-libvlc.yml
+!/.github/workflows/ci.yml
+
+# Downloaded artifacts
+artifacts/
 temp*
