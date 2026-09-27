@@ -10,6 +10,7 @@ CFLAGS = -std=c99 -Wall -I./include -isysroot $(THEOS)/sdks/iPhoneOS14.5.sdk
 LDFLAGS = -L./lib -lvlc -lvlccore -liconv -lz -lm \
           -framework CoreGraphics -framework QuartzCore \
           -framework UIKit -framework Foundation \
+          -framework VideoToolbox -framework Metal -framework AudioToolbox \
           -isysroot $(THEOS)/sdks/iPhoneOS14.5.sdk
 
 # Source files

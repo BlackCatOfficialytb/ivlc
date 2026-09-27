@@ -34,6 +34,20 @@ void libvlc_media_player_release(libvlc_media_player_t *p_mi);
 int libvlc_media_player_play(libvlc_media_player_t *p_mi);
 void libvlc_media_player_stop(libvlc_media_player_t *p_mi);
 
+/* Video output callbacks (for custom rendering / CALayer binding) */
+typedef void *(*libvlc_video_lock_cb)(void *opaque, void **planes);
+typedef void (*libvlc_video_unlock_cb)(void *opaque, void *picture, void *const *planes);
+typedef void (*libvlc_video_display_cb)(void *opaque, void *picture);
+typedef void (*libvlc_video_format_cb)(void **opaque, char *chroma, unsigned *width, unsigned *height, unsigned *pitches, unsigned *lines);
+
+void libvlc_video_set_callbacks(libvlc_media_player_t *p_mi,
+                                libvlc_video_lock_cb lock,
+                                libvlc_video_unlock_cb unlock,
+                                libvlc_video_display_cb display,
+                                void *opaque);
+void libvlc_video_set_format(libvlc_media_player_t *p_mi, const char *chroma,
+                             unsigned width, unsigned height, unsigned pitch);
+
 /* Media player state */
 typedef enum libvlc_state_t {
     libvlc_NothingSpecial = 0,

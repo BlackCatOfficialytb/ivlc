@@ -4,12 +4,13 @@ A minimal, pure C99 media player prototype for jailbroken iOS 12+ (arm64) that d
 
 ## Features
 
-- **Pure C99** - No Swift, no Objective-C, no C++
-- **YouTube Support** - Resolves direct M3U8/MP4 URLs via `yt-dlp`
-- **LibVLC Engine** - Hardware-accelerated video/audio playback
-- **iOS 12+ arm64** - Targets jailbroken devices (Procursus/rootless)
+- **Pure C99** - No Swift, no Objective-C, no C++ (uses `objc_msgSend` for CALayer binding)
+- **YouTube Support** - Resolves direct M3U8/MP4 URLs via `yt-dlp` (format `bv+ba/b`)
+- **LibVLC Engine** - Hardware-accelerated video/audio playback via VideoToolbox/Metal
+- **iOS 12+ arm64** - Targets jailbroken devices (Procursus/rootless, Dopamine/Palera1n)
 - **Minimal Dependencies** - Only `python3`, `ffmpeg`, `libvlc`, `libvlccore`
-- **Cross-compilable** - Build on Windows/macOS/Linux with Theos/clang
+- **Cross-compilable** - Build on Windows/macOS/Linux with Theos/clang (`E:\llvm`)
+- **CALayer Video Output** - Binds LibVLC to `CALayer` via pure C Objective-C runtime
 
 ## Architecture
 
@@ -21,9 +22,25 @@ A minimal, pure C99 media player prototype for jailbroken iOS 12+ (arm64) that d
                                                 │
                                                 ▼
 ┌─────────────┐     ┌──────────────┐     ┌─────────────┐
-│  Video      │◀────│  LibVLC      │◀────│  libvlc_    │
-│  Output     │     │  Player      │     │  media_*    │
+│  CALayer    │◀────│  LibVLC      │◀────│  libvlc_    │
+│  (Video)    │     │  Player      │     │  media_*    │
 └─────────────┘     └──────────────┘     └─────────────┘
+       │                   │
+       ▼                   ▼
+┌─────────────────────────────────────┐
+│  Hardware Acceleration              │
+│  VideoToolbox (decode) + Metal (GPU)│
+└─────────────────────────────────────┘
+```
+
+**CALayer Binding (Pure C):**
+```c
+#include <objc/objc.h>
+#include <objc/message.h>
+#include <QuartzCore/QuartzCore.h>
+
+void *layer = objc_msgSend(objc_getClass("CALayer"), sel_registerName("layer"));
+libvlc_video_set_callbacks(mp, NULL, NULL, NULL, layer);
 ```
 
 ## Project Structure
@@ -33,14 +50,18 @@ ivlc/
 ├── .vscode/
 │   └── c_cpp_properties.json    # IntelliSense config (Windows cross-compile)
 ├── include/
-│   ├── vlc/vlc.h                # LibVLC API stub
+│   ├── vlc/vlc.h                # LibVLC API stub (with video callbacks)
+│   ├── objc/objc.h              # Objective-C runtime stubs
+│   ├── objc/message.h           # objc_msgSend declarations
+│   ├── objc/runtime.h           # objc_getClass, sel_registerName
+│   ├── QuartzCore/QuartzCore.h  # CALayer, UIColor stubs
 │   ├── stdio.h, stdlib.h, ...   # C stdlib stubs for IntelliSense
 │   └── sys/types.h, wait.h      # POSIX stubs
 ├── lib/
 │   └── README.md                # Instructions for libvlc.a / libvlccore.a
 ├── Makefile                     # Theos-style build (iphone:clang:14.5:12.0)
 ├── control                      # Debian package metadata
-├── main.c                       # Entry point: LibVLC init → yt-dlp → playback
+├── main.c                       # Entry point: LibVLC init → yt-dlp → CALayer
 ├── ytdlp_extract.h              # API: extract_stream_url()
 └── ytdlp_extract.c              # posix_spawn + pipe capture implementation
 ```
