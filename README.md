@@ -140,19 +140,18 @@ while (g_running) { sleep(1); }
 
 ## CI/CD (GitHub Actions)
 
-### Automated LibVLC Build
-**Workflow:** `.github/workflows/build-libvlc.yml`
+### iVLC Build with Prebuilt LibVLC (from libvlc-gen)
+**Workflow:** `.github/workflows/build-ivlc-prebuilt.yml`
 
-Triggers on `workflow_dispatch` (manual) or push to main. Runs on `macos-14`:
-1. Checks out `videolan/vlc` source
-2. Builds static `libvlc.a` + `libvlccore.a` for iOS arm64 via `extras/package/ios/build.sh`
-3. Uploads artifacts (libs + headers)
-4. Builds iVLC binary using Theos
-5. Creates GitHub Release with all artifacts
+Pulls prebuilt LibVLC from **BlackCatOfficialytb/libvlc-gen** releases (separate project):
+1. Fetches latest release from `libvlc-gen` repo
+2. Downloads `libvlc.a`, `libvlccore.a`, headers as artifacts
+3. Builds iVLC binary using Theos
+4. Creates combined release tagged with both versions
 
 ```bash
 # Trigger manually
-gh workflow run build-libvlc.yml
+gh workflow run build-ivlc-prebuilt.yml
 ```
 
 ### Continuous Integration
@@ -170,7 +169,7 @@ gh run list --workflow=ci.yml
 
 ### Artifacts
 Each workflow run produces downloadable artifacts:
-- `libvlc-ios-arm64` - Static libraries + headers
+- `libvlc-ios-arm64` - Static libraries + headers (from libvlc-gen)
 - `ivlc-ios-arm64` - iVLC binary
 
 ## Debian Package
