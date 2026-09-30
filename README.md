@@ -1,19 +1,20 @@
 # iVLC - Lightweight Media Player for Jailbroken iOS 12+
 
-A minimal, pure C99 media player prototype for jailbroken iOS 12+ (arm64) that demonstrates end-to-end YouTube playback using **yt-dlp** for stream extraction and **LibVLC** for hardware-accelerated decoding/rendering.
+A minimal, pure C99 media player prototype for jailbroken iOS 12+ (arm64) that demonstrates end-to-end YouTube playback using **yt-dlp** for stream extraction and **LibVLC** or **VLCKit/MobileVLCKit** for hardware-accelerated decoding/rendering.
 
 ## Features
 
 - **Pure C99** - No Swift, no Objective-C, no C++ (uses `objc_msgSend` for CALayer binding)
 - **YouTube Support** - Resolves direct M3U8/MP4 URLs via `yt-dlp` (format `bv+ba/b`)
-- **LibVLC Engine** - Hardware-accelerated video/audio playback via VideoToolbox/Metal
+- **Dual Backend Support** - Choose between raw **LibVLC** or **VLCKit/MobileVLCKit** frameworks
 - **iOS 12+ arm64** - Targets jailbroken devices (Procursus/rootless, Dopamine/Palera1n)
-- **Minimal Dependencies** - Only `python3`, `ffmpeg`, `libvlc`, `libvlccore`
+- **Minimal Dependencies** - Only `python3`, `ffmpeg`, `libvlc`/`libvlccore` or VLCKit framework
 - **Cross-compilable** - Build on Windows/macOS/Linux with Theos/clang (`E:\llvm`)
-- **CALayer Video Output** - Binds LibVLC to `CALayer` via pure C Objective-C runtime
+- **CALayer Video Output** - Binds video output to `CALayer` via pure C Objective-C runtime
 
 ## Architecture
 
+### LibVLC Backend (Default)
 ```
 ┌─────────────┐     ┌──────────────┐     ┌─────────────┐
 │  YouTube    │────▶│   yt-dlp     │────▶│  Direct     │
@@ -33,7 +34,27 @@ A minimal, pure C99 media player prototype for jailbroken iOS 12+ (arm64) that d
 └─────────────────────────────────────┘
 ```
 
-**CALayer Binding (Pure C):**
+### VLCKit/MobileVLCKit Backend
+```
+┌─────────────┐     ┌──────────────┐     ┌─────────────┐
+│  YouTube    │────▶│   yt-dlp     │────▶│  Direct     │
+│  URL        │     │  (Procursus) │     │  Stream URL │
+└─────────────┘     └──────────────┘     └──────┬──────┘
+                                                │
+                                                ▼
+┌─────────────┐     ┌──────────────┐     ┌─────────────┐
+│  CALayer    │◀────│  VLCKit      │◀────│  VLCMedia   │
+│  (Video)    │     │  Player      │     │  Player     │
+└─────────────┘     └──────────────┘     └─────────────┘
+       │                   │
+       ▼                   ▼
+┌─────────────────────────────────────┐
+│  Hardware Acceleration              │
+│  VideoToolbox (decode) + Metal (GPU)│
+└─────────────────────────────────────┘
+```
+
+**CALayer Binding (Pure C - LibVLC):**
 ```c
 #include <objc/objc.h>
 #include <objc/message.h>
@@ -41,6 +62,18 @@ A minimal, pure C99 media player prototype for jailbroken iOS 12+ (arm64) that d
 
 void *layer = objc_msgSend(objc_getClass("CALayer"), sel_registerName("layer"));
 libvlc_video_set_callbacks(mp, NULL, NULL, NULL, layer);
+```
+
+**CALayer Binding (Pure C - VLCKit):**
+```c
+#include <objc/objc.h>
+#include <objc/message.h>
+#include <QuartzCore/QuartzCore.h>
+#include "vlckit/vlckit_wrapper.h"
+
+void *layer = objc_msgSend(objc_getClass("CALayer"), sel_registerName("layer"));
+vlckit_media_player_set_calayer(player, layer);
+vlckit_media_player_set_video_output_mode(player, VLCKitVideoOutputModeCALayer);
 ```
 
 ## Project Structure
@@ -51,6 +84,11 @@ ivlc/
 │   └── c_cpp_properties.json    # IntelliSense config (Windows cross-compile)
 ├── include/
 │   ├── vlc/vlc.h                # LibVLC API stub (with video callbacks)
+│   ├── vlckit/
+│   │   ├── vlckit_wrapper.h     # Unified C API for VLCKit/MobileVLCKit/TVVLCKit
+│   │   ├── MobileVLCKit.h       # MobileVLCKit framework stub (iOS)
+│   │   ├── VLCKit.h             # VLCKit framework stub (macOS)
+│   │   └── TVVLCKit.h           # TVVLCKit framework stub (tvOS)
 │   ├── objc/objc.h              # Objective-C runtime stubs
 │   ├── objc/message.h           # objc_msgSend declarations
 │   ├── objc/runtime.h           # objc_getClass, sel_registerName
@@ -59,12 +97,121 @@ ivlc/
 │   └── sys/types.h, wait.h      # POSIX stubs
 ├── lib/
 │   └── README.md                # Instructions for libvlc.a / libvlccore.a
-├── Makefile                     # Theos-style build (iphone:clang:14.5:12.0)
+├── Makefile                     # Theos-style build with BACKEND=libvlc|vlckit
 ├── control                      # Debian package metadata
-├── main.c                       # Entry point: LibVLC init → yt-dlp → CALayer
+├── main.c                       # Entry point: backend init → yt-dlp → CALayer
+├── vlckit_wrapper.c             # VLCKit wrapper implementation (pure C)
 ├── ytdlp_extract.h              # API: extract_stream_url()
 └── ytdlp_extract.c              # posix_spawn + pipe capture implementation
 ```
+
+## Requirements (on Device)
+
+### LibVLC Backend (Default)
+- **Jailbroken iOS 12.0+** (arm64)
+- **Procursus APT** packages:
+  - `python3` (for yt-dlp)
+  - `ffmpeg`
+  - `yt-dlp` (installed to `/var/jb/usr/bin/yt-dlp` or `/usr/bin/yt-dlp`)
+- **LibVLC static libraries**: `libvlc.a`, `libvlccore.a` (in `./lib/`)
+
+### VLCKit/MobileVLCKit Backend
+- **Jailbroken iOS 12.0+** (arm64)
+- **Procursus APT** packages:
+  - `python3` (for yt-dlp)
+  - `ffmpeg`
+  - `yt-dlp`
+- **MobileVLCKit framework**: Install via CocoaPods/Carthage or copy framework to device
+  - Framework must be available at link time (`-framework MobileVLCKit`)
+
+## Building
+
+### On Device (with Theos)
+
+```bash
+# Install Theos and iOS SDK first
+
+# Build with LibVLC backend (default)
+make clean all
+# Output: ./ivlc (arm64 binary)
+
+# Build with VLCKit/MobileVLCKit backend
+make vlckit
+# Output: ./ivlc (arm64 binary, linked against MobileVLCKit framework)
+```
+
+### Cross-compile from Windows (with LLVM/Clang at E:\llvm)
+
+```bash
+# Set up environment
+export THEOS=/path/to/theos
+export SDKROOT=/path/to/iPhoneOS14.5.sdk
+
+# Build with LibVLC backend (default)
+make clean all
+
+# Build with VLCKit backend
+make vlckit
+```
+
+### Compiler Configuration
+The project uses `clang` from `E:\llvm\bin\clang.exe` for Windows-side IntelliSense and cross-compilation.
+
+## Backend Selection
+
+The Makefile supports two backends via the `BACKEND` variable:
+
+| Backend | Define | Link Flags | Source Files |
+|---------|--------|------------|--------------|
+| LibVLC (default) | `USE_LIBVLC=1` | `-lvlc -lvlccore` | `main.c ytdlp_extract.c` |
+| VLCKit | `USE_VLCKIT=1` | `-framework MobileVLCKit` | `main.c ytdlp_extract.c vlckit_wrapper.c` |
+
+### LibVLC Backend
+```bash
+make libvlc
+# or simply
+make
+```
+
+### VLCKit/MobileVLCKit Backend
+```bash
+make vlckit
+```
+
+## VLCKit Framework Installation
+
+### CocoaPods (iOS)
+```ruby
+target '<iOS Target>' do
+    platform :ios, '12.0'
+    pod 'MobileVLCKit', '~>3.3.0'
+end
+```
+
+### Carthage (iOS)
+```
+binary "https://code.videolan.org/videolan/VLCKit/raw/master/Packaging/MobileVLCKit.json" ~> 3.3.0
+```
+
+### Manual Framework
+Copy `MobileVLCKit.framework` to your project and link it in Xcode/Theos.
+
+## Running
+
+```bash
+# On device
+./ivlc "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+
+# With custom URL
+./ivlc "https://youtube.com/watch?v=YOUR_VIDEO_ID"
+```
+
+The player will:
+1. Extract direct stream URL using yt-dlp
+2. Initialize selected backend (LibVLC or VLCKit)
+3. Create CALayer for video output
+4. Start hardware-accelerated playback
+5. Run until Ctrl+C or playback ends
 
 ## Requirements (on Device)
 

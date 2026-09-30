@@ -3,19 +3,20 @@ Name: iVLC
 Version: 1.0.0-1
 Architecture: iphoneos-arm64
 Maintainer: BlackCat <quanvm0501alt1@tutamail.com>
-Description: Lightweight media player for jailbroken iOS 12+ using LibVLC and yt-dlp
+Description: Lightweight media player for jailbroken iOS 12+ using LibVLC/VLCKit and yt-dlp
  iVLC is a minimal C-based media player prototype that demonstrates
  end-to-end YouTube playback on jailbroken iOS devices. It uses yt-dlp
- to extract direct stream URLs and LibVLC for hardware-accelerated
- video/audio decoding and rendering.
+ to extract direct stream URLs and either LibVLC or VLCKit/MobileVLCKit
+ for hardware-accelerated video/audio decoding and rendering.
  
  Features:
  - Pure C99 implementation (no Swift/Objective-C)
  - YouTube URL resolution via yt-dlp (Procursus APT)
- - LibVLC integration for media playback
+ - Dual backend: LibVLC (raw) or VLCKit/MobileVLCKit (framework)
  - ARM64 optimized for iOS 12.0+
  - Minimal dependencies
-Depends: python3, ffmpeg, libvlc, libvlccore, firmware-ios (>= 12.0)
+Depends: python3, ffmpeg, firmware-ios (>= 12.0)
+Recommends: libvlc, libvlccore | mobilevlckit
 Section: Multimedia
 Priority: optional
 Homepage: https://github.com/BlackCatOfficialytb/ivlc

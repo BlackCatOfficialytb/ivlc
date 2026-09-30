@@ -1,20 +1,39 @@
 # iVLC - Lightweight Media Player for Jailbroken iOS 12+
 # Theos-style Makefile for pure C compilation
+# Supports both LibVLC (raw) and VLCKit/MobileVLCKit backends
 
 TARGET = iphone:clang:14.5:12.0
 ARCHS = arm64
 
+# Backend selection: libvlc (default) or vlckit
+BACKEND ?= libvlc
+
 # Compiler and linker
 CC = $(THEOS)/toolchain/Xcode.xctoolchain/usr/bin/clang
 CFLAGS = -std=c99 -Wall -I./include -isysroot $(THEOS)/sdks/iPhoneOS14.5.sdk
-LDFLAGS = -L./lib -lvlc -lvlccore -liconv -lz -lm \
-          -framework CoreGraphics -framework QuartzCore \
-          -framework UIKit -framework Foundation \
-          -framework VideoToolbox -framework Metal -framework AudioToolbox \
-          -isysroot $(THEOS)/sdks/iPhoneOS14.5.sdk
 
-# Source files
-SRCS = main.c ytdlp_extract.c
+# Common frameworks
+COMMON_FRAMEWORKS = -framework CoreGraphics -framework QuartzCore \
+                    -framework UIKit -framework Foundation \
+                    -framework VideoToolbox -framework Metal -framework AudioToolbox
+
+# Backend-specific configuration
+ifeq ($(BACKEND),vlckit)
+    # VLCKit/MobileVLCKit backend
+    CFLAGS += -DUSE_VLCKIT=1
+    LDFLAGS = $(COMMON_FRAMEWORKS) \
+              -framework MobileVLCKit \
+              -isysroot $(THEOS)/sdks/iPhoneOS14.5.sdk
+    SRCS = main.c ytdlp_extract.c vlckit_wrapper.c
+else
+    # LibVLC raw backend (default)
+    CFLAGS += -DUSE_LIBVLC=1
+    LDFLAGS = -L./lib -lvlc -lvlccore -liconv -lz -lm \
+              $(COMMON_FRAMEWORKS) \
+              -isysroot $(THEOS)/sdks/iPhoneOS14.5.sdk
+    SRCS = main.c ytdlp_extract.c
+endif
+
 OBJS = $(SRCS:.c=.o)
 
 # Output
@@ -35,4 +54,12 @@ clean:
 install: $(OUTPUT)
 	# Installation handled by Debian package
 
-.PHONY: all clean install
+# Build with VLCKit backend
+vlckit: clean
+	$(MAKE) BACKEND=vlckit
+
+# Build with LibVLC backend (default)
+libvlc: clean
+	$(MAKE) BACKEND=libvlc
+
+.PHONY: all clean install vlckit libvlc
