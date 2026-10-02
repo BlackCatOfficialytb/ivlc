@@ -2,6 +2,11 @@
 #ifndef _QUARTZCORE_QUARTZCORE_H
 #define _QUARTZCORE_QUARTZCORE_H
 
+/* On Apple platforms, include the real QuartzCore/QuartzCore.h */
+#if defined(__APPLE__) || defined(__MACH__)
+#include <QuartzCore/QuartzCore.h>
+#else
+
 #include <stddef.h>
 
 #ifdef __cplusplus
@@ -10,7 +15,6 @@ extern "C" {
 
 /* Core Animation types */
 typedef struct _CA_CALayer *CALayerRef;
-typedef CALayerRef id;  /* Objective-C object */
 
 typedef struct _CA_CAAnimation *CAAnimationRef;
 typedef struct _CA_CATransaction *CATransactionRef;
@@ -37,4 +41,5 @@ CGColorRef UIColor_CGColor(UIColorRef color);
 }
 #endif
 
+#endif /* __APPLE__ || __MACH__ */
 #endif /* _QUARTZCORE_QUARTZCORE_H */

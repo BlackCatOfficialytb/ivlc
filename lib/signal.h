@@ -2,6 +2,11 @@
 #ifndef _SIGNAL_H
 #define _SIGNAL_H
 
+/* On Apple platforms, include the real signal.h */
+#if defined(__APPLE__) || defined(__MACH__)
+#include <signal.h>
+#else
+
 #include <stddef.h>
 
 #ifdef __cplusplus
@@ -44,4 +49,5 @@ int raise(int sig);
 }
 #endif
 
+#endif /* __APPLE__ || __MACH__ */
 #endif /* _SIGNAL_H */

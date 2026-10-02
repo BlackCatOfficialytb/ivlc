@@ -2,6 +2,11 @@
 #ifndef _ERRNO_H
 #define _ERRNO_H
 
+/* On Apple platforms, include the real errno.h */
+#if defined(__APPLE__) || defined(__MACH__)
+#include <errno.h>
+#else
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -47,4 +52,5 @@ extern int errno;
 }
 #endif
 
+#endif /* __APPLE__ || __MACH__ */
 #endif /* _ERRNO_H */

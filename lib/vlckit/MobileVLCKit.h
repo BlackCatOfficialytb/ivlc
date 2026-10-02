@@ -1,10 +1,16 @@
 /*
- * TVVLCKit framework stub for IntelliSense / cross-compilation reference (tvOS)
+ * MobileVLCKit framework stub for IntelliSense / cross-compilation reference
  * Actual framework provides the real implementation at link time
+ * This mirrors the public API subset used in vlckit_wrapper.c
  */
 
-#ifndef TV_VLCKIT_H
-#define TV_VLCKIT_H
+#ifndef MOBILE_VLCKIT_H
+#define MOBILE_VLCKIT_H
+
+/* On Apple platforms, include the real MobileVLCKit framework */
+#if defined(__APPLE__) || defined(__MACH__)
+#import <MobileVLCKit/MobileVLCKit.h>
+#else
 
 #ifdef __cplusplus
 extern "C" {
@@ -55,7 +61,7 @@ typedef NS_ENUM(NSInteger, VLCVideoOutputMode) {
 - (void)pause;
 - (void)stop;
 - (VLCMediaPlayerState)state;
-- (void)setDrawable:(id)drawable;  // CALayer on tvOS
+- (void)setDrawable:(id)drawable;  // CALayer on iOS/tvOS
 - (id)drawable;
 - (void)setVideoOutputMode:(VLCVideoOutputMode)mode;
 - (void)setDelegate:(id<VLCMediaPlayerDelegate>)delegate;
@@ -92,4 +98,5 @@ typedef NS_ENUM(NSInteger, VLCVideoOutputMode) {
 }
 #endif
 
-#endif /* TV_VLCKIT_H */
+#endif /* __APPLE__ || __MACH__ */
+#endif /* MOBILE_VLCKIT_H */

@@ -2,14 +2,27 @@
 #ifndef _SPAWN_H
 #define _SPAWN_H
 
+/* On Apple platforms, include the real spawn.h */
+#if defined(__APPLE__) || defined(__MACH__)
+#include <spawn.h>
+#else
+
 #include <stddef.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-typedef struct posix_spawn_file_actions_t posix_spawn_file_actions_t;
-typedef struct posix_spawnattr_t posix_spawnattr_t;
+typedef struct posix_spawn_file_actions_t {
+    int dummy;
+} posix_spawn_file_actions_t;
+
+typedef struct posix_spawnattr_t {
+    int dummy;
+} posix_spawnattr_t;
+
+typedef int pid_t;
+typedef unsigned int mode_t;
 
 extern char **environ;
 
@@ -29,4 +42,5 @@ int posix_spawn_file_actions_adddup2(posix_spawn_file_actions_t *file_actions, i
 }
 #endif
 
+#endif /* __APPLE__ || __MACH__ */
 #endif /* _SPAWN_H */

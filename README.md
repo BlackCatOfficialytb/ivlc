@@ -15,7 +15,8 @@ A minimal, pure C99 media player prototype for jailbroken iOS 12+ (arm64) that d
 ## Architecture
 
 ### LibVLC Backend (Default)
-```
+
+```txt
 ┌─────────────┐     ┌──────────────┐     ┌─────────────┐
 │  YouTube    │────▶│   yt-dlp     │────▶│  Direct     │
 │  URL        │     │  (Procursus) │     │  Stream URL │
@@ -35,7 +36,8 @@ A minimal, pure C99 media player prototype for jailbroken iOS 12+ (arm64) that d
 ```
 
 ### VLCKit/MobileVLCKit Backend
-```
+
+```txt
 ┌─────────────┐     ┌──────────────┐     ┌─────────────┐
 │  YouTube    │────▶│   yt-dlp     │────▶│  Direct     │
 │  URL        │     │  (Procursus) │     │  Stream URL │
@@ -55,6 +57,7 @@ A minimal, pure C99 media player prototype for jailbroken iOS 12+ (arm64) that d
 ```
 
 **CALayer Binding (Pure C - LibVLC):**
+
 ```c
 #include <objc/objc.h>
 #include <objc/message.h>
@@ -65,6 +68,7 @@ libvlc_video_set_callbacks(mp, NULL, NULL, NULL, layer);
 ```
 
 **CALayer Binding (Pure C - VLCKit):**
+
 ```c
 #include <objc/objc.h>
 #include <objc/message.h>
@@ -78,7 +82,7 @@ vlckit_media_player_set_video_output_mode(player, VLCKitVideoOutputModeCALayer);
 
 ## Project Structure
 
-```
+```txt
 ivlc/
 ├── .vscode/
 │   └── c_cpp_properties.json    # IntelliSense config (Windows cross-compile)
@@ -95,7 +99,7 @@ ivlc/
 │   ├── QuartzCore/QuartzCore.h  # CALayer, UIColor stubs
 │   ├── stdio.h, stdlib.h, ...   # C stdlib stubs for IntelliSense
 │   └── sys/types.h, wait.h      # POSIX stubs
-├── lib/
+├── stdlib/
 │   └── README.md                # Instructions for libvlc.a / libvlccore.a
 ├── Makefile                     # Theos-style build with BACKEND=libvlc|vlckit
 ├── control                      # Debian package metadata
@@ -108,6 +112,7 @@ ivlc/
 ## Requirements (on Device)
 
 ### LibVLC Backend (Default)
+
 - **Jailbroken iOS 12.0+** (arm64)
 - **Procursus APT** packages:
   - `python3` (for yt-dlp)
@@ -116,6 +121,7 @@ ivlc/
 - **LibVLC static libraries**: `libvlc.a`, `libvlccore.a` (in `./lib/`)
 
 ### VLCKit/MobileVLCKit Backend
+
 - **Jailbroken iOS 12.0+** (arm64)
 - **Procursus APT** packages:
   - `python3` (for yt-dlp)
@@ -155,6 +161,7 @@ make vlckit
 ```
 
 ### Compiler Configuration
+
 The project uses `clang` from `E:\llvm\bin\clang.exe` for Windows-side IntelliSense and cross-compilation.
 
 ## Backend Selection

@@ -3,8 +3,8 @@
         {
             "name": "iOS arm64 (Cross-compile from Windows)",
             "includePath": [
-                "${workspaceFolder}/include",
-                "${workspaceFolder}/lib"
+                "${workspaceFolder}/lib",
+                "${workspaceFolder}/stdlib"
             ],
             "defines": [
                 "__arm64__",
@@ -18,8 +18,8 @@
             "intelliSenseMode": "linux-clang-x64",
             "browse": {
                 "path": [
-                    "${workspaceFolder}/include",
-                    "${workspaceFolder}/lib"
+                    "${workspaceFolder}/lib",
+                    "${workspaceFolder}/stdlib"
                 ],
                 "limitSymbolsToIncludedHeaders": true
             }

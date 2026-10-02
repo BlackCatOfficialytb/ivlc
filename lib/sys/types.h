@@ -2,6 +2,11 @@
 #ifndef _SYS_TYPES_H
 #define _SYS_TYPES_H
 
+/* On Apple platforms, include the real sys/types.h */
+#if defined(__APPLE__) || defined(__MACH__)
+#include <sys/types.h>
+#else
+
 #include <stddef.h>
 
 #ifdef __cplusplus
@@ -20,4 +25,5 @@ typedef int mode_t;
 }
 #endif
 
+#endif /* __APPLE__ || __MACH__ */
 #endif /* _SYS_TYPES_H */

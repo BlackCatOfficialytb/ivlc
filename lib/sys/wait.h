@@ -2,6 +2,11 @@
 #ifndef _SYS_WAIT_H
 #define _SYS_WAIT_H
 
+/* On Apple platforms, include the real sys/wait.h */
+#if defined(__APPLE__) || defined(__MACH__)
+#include <sys/wait.h>
+#else
+
 #include <stddef.h>
 
 #ifdef __cplusplus
@@ -27,4 +32,5 @@ pid_t waitpid(pid_t pid, int *status, int options);
 }
 #endif
 
+#endif /* __APPLE__ || __MACH__ */
 #endif /* _SYS_WAIT_H */

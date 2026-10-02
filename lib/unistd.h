@@ -2,6 +2,11 @@
 #ifndef _UNISTD_H
 #define _UNISTD_H
 
+/* On Apple platforms, include the real unistd.h */
+#if defined(__APPLE__) || defined(__MACH__)
+#include <unistd.h>
+#else
+
 #include <stddef.h>
 
 #ifdef __cplusplus
@@ -9,6 +14,11 @@ extern "C" {
 #endif
 
 typedef long ssize_t;
+typedef int pid_t;
+typedef unsigned int uid_t;
+typedef unsigned int gid_t;
+typedef long off_t;
+typedef unsigned int mode_t;
 
 int access(const char *pathname, int mode);
 int chdir(const char *path);
@@ -61,8 +71,13 @@ ssize_t write(int fd, const void *buf, size_t count);
 #define STDOUT_FILENO 1
 #define STDERR_FILENO 2
 
+#define O_RDONLY 0
+#define O_WRONLY 1
+#define O_RDWR 2
+
 #ifdef __cplusplus
 }
 #endif
 
+#endif /* __APPLE__ || __MACH__ */
 #endif /* _UNISTD_H */

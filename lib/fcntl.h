@@ -2,6 +2,11 @@
 #ifndef _FCNTL_H
 #define _FCNTL_H
 
+/* On Apple platforms, include the real fcntl.h */
+#if defined(__APPLE__) || defined(__MACH__)
+#include <fcntl.h>
+#else
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -22,4 +27,5 @@ int fcntl(int fd, int cmd, ...);
 }
 #endif
 
+#endif /* __APPLE__ || __MACH__ */
 #endif /* _FCNTL_H */

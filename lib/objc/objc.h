@@ -2,6 +2,11 @@
 #ifndef _OBJC_OBJC_H
 #define _OBJC_OBJC_H
 
+/* On Apple platforms, include the real objc/objc.h */
+#if defined(__APPLE__) || defined(__MACH__)
+#include <objc/objc.h>
+#else
+
 #include <stddef.h>
 
 #ifdef __cplusplus
@@ -18,6 +23,7 @@ typedef id (*IMP)(id, SEL, ...);
 
 #define YES 1
 #define NO 0
+#define nil ((id)0)
 
 /* Basic types */
 typedef signed char BOOL;
@@ -28,4 +34,5 @@ typedef unsigned long ulong;
 }
 #endif
 
+#endif /* __APPLE__ || __MACH__ */
 #endif /* _OBJC_OBJC_H */

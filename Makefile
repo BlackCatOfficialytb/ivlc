@@ -10,7 +10,7 @@ BACKEND ?= libvlc
 
 # Compiler and linker
 CC = $(THEOS)/toolchain/Xcode.xctoolchain/usr/bin/clang
-CFLAGS = -std=c99 -Wall -I./include -isysroot $(THEOS)/sdks/iPhoneOS14.5.sdk
+CFLAGS = -std=c99 -Wall -I./lib -isysroot $(THEOS)/sdks/iPhoneOS14.5.sdk
 
 # Common frameworks
 COMMON_FRAMEWORKS = -framework CoreGraphics -framework QuartzCore \
@@ -28,7 +28,7 @@ ifeq ($(BACKEND),vlckit)
 else
     # LibVLC raw backend (default)
     CFLAGS += -DUSE_LIBVLC=1
-    LDFLAGS = -L./lib -lvlc -lvlccore -liconv -lz -lm \
+    LDFLAGS = -L./stdlib -lvlc -lvlccore -liconv -lz -lm \
               $(COMMON_FRAMEWORKS) \
               -isysroot $(THEOS)/sdks/iPhoneOS14.5.sdk
     SRCS = main.c ytdlp_extract.c

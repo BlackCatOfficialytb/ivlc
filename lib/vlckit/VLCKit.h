@@ -6,6 +6,11 @@
 #ifndef VLCKIT_H
 #define VLCKIT_H
 
+/* On Apple platforms, include the real VLCKit framework */
+#if defined(__APPLE__) || defined(__MACH__)
+#import <VLCKit/VLCKit.h>
+#else
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -92,4 +97,5 @@ typedef NS_ENUM(NSInteger, VLCVideoOutputMode) {
 }
 #endif
 
+#endif /* __APPLE__ || __MACH__ */
 #endif /* VLCKIT_H */

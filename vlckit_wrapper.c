@@ -68,7 +68,7 @@ static void vlckit_delegate_encountered_error(id self, SEL _cmd, id player, id e
 /* Create delegate class at runtime */
 static Class vlckit_create_delegate_class(void) {
     Class delegateClass = objc_allocateClassPair(objc_getClass("NSObject"), "VLCKitDelegate", 0);
-    if (!delegateClass) return nil;
+    if (!delegateClass) return NULL;
     
     /* Add state changed method */
     class_addMethod(delegateClass, sel_registerName(SEL_MEDIA_PLAYER_STATE_CHANGED),
@@ -88,7 +88,7 @@ static void vlckit_delegate_state_changed(id self, SEL _cmd, id player) {
     if (g_state_cb) {
         /* Get state from player */
         id stateObj = objc_msgSend(player, sel_registerName(SEL_STATE));
-        long state = (long)stateObj;
+        long state = OBJC_MSGSEND_LONG(player, sel_registerName(SEL_STATE));
         g_state_cb((VLCKitMediaPlayerState)state, g_state_user_data);
     }
 }
@@ -133,7 +133,7 @@ int vlckit_init(void) {
 void vlckit_deinit(void) {
     if (g_vlckit_delegate) {
         objc_msgSend(g_vlckit_delegate, sel_registerName(SEL_DEALLOC));
-        g_vlckit_delegate = nil;
+        g_vlckit_delegate = NULL;
     }
     g_state_cb = NULL;
     g_state_user_data = NULL;
@@ -291,7 +291,7 @@ void vlckit_media_player_set_volume(VLCKitMediaPlayer *player, float volume) {
 
 float vlckit_media_player_get_volume(VLCKitMediaPlayer *player) {
     if (!player) return 0.0f;
-    return (float)objc_msgSend((id)player, sel_registerName(SEL_VOLUME));
+    return OBJC_MSGSEND_FLOAT((id)player, sel_registerName(SEL_VOLUME));
 }
 
 void vlckit_media_player_set_mute(VLCKitMediaPlayer *player, int mute) {
@@ -301,7 +301,7 @@ void vlckit_media_player_set_mute(VLCKitMediaPlayer *player, int mute) {
 
 int vlckit_media_player_get_mute(VLCKitMediaPlayer *player) {
     if (!player) return 0;
-    return (int)(long)objc_msgSend((id)player, sel_registerName(SEL_MUTED));
+    return OBJC_MSGSEND_BOOL((id)player, sel_registerName(SEL_MUTED));
 }
 
 /* Time/position */
@@ -317,7 +317,7 @@ long long vlckit_media_player_get_length(VLCKitMediaPlayer *player) {
 
 float vlckit_media_player_get_position(VLCKitMediaPlayer *player) {
     if (!player) return 0.0f;
-    return (float)objc_msgSend((id)player, sel_registerName(SEL_POSITION));
+    return OBJC_MSGSEND_FLOAT((id)player, sel_registerName(SEL_POSITION));
 }
 
 int vlckit_media_player_set_position(VLCKitMediaPlayer *player, float position) {

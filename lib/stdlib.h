@@ -2,11 +2,23 @@
 #ifndef _STDLIB_H
 #define _STDLIB_H
 
+/* On Apple platforms, include the real stdlib.h */
+#if defined(__APPLE__) || defined(__MACH__)
+#include <stdlib.h>
+#else
+
 #include <stddef.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+typedef struct { int quot; int rem; } div_t;
+typedef struct { long quot; long rem; } ldiv_t;
+typedef struct { long long quot; long long rem; } lldiv_t;
+
+#define EXIT_SUCCESS 0
+#define EXIT_FAILURE 1
 
 void *malloc(size_t size);
 void *calloc(size_t nmemb, size_t size);
@@ -53,4 +65,5 @@ size_t wcstombs(char *s, const wchar_t *pwcs, size_t n);
 }
 #endif
 
+#endif /* __APPLE__ || __MACH__ */
 #endif /* _STDLIB_H */

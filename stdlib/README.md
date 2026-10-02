@@ -4,7 +4,7 @@ This directory contains backend-specific libraries. The project supports two bac
 
 ## 1. LibVLC Backend (Default)
 
-Place the following static libraries in the `stdlib/` directory:
+Place the following static libraries in this directory (`./lib/`):
 
 - `libvlc.a` - LibVLC core library
 - `libvlccore.a` - LibVLC core dependencies
@@ -31,8 +31,8 @@ make -j$(sysctl -n hw.ncpu)
 make install
 
 # The static libraries will be in install/lib/
-cp install/lib/libvlc.a ../../../stdlib/
-cp install/lib/libvlccore.a ../../../stdlib/
+cp install/lib/libvlc.a ../../../lib/
+cp install/lib/libvlccore.a ../../../lib/
 ```
 
 ### Procursus / Jailbroken iOS
@@ -44,8 +44,8 @@ On a jailbroken device with Procursus, you can also install the prebuilt librari
 apt install libvlc-dev
 
 # Or copy from system
-cp /var/jb/usr/lib/libvlc.a ./stdlib/
-cp /var/jb/usr/lib/libvlccore.a ./stdlib/
+cp /var/jb/usr/lib/libvlc.a ./lib/
+cp /var/jb/usr/lib/libvlccore.a ./lib/
 ```
 
 ### Required Headers
@@ -62,7 +62,6 @@ For the VLCKit backend, you need the **MobileVLCKit.framework** (iOS) or **VLCKi
 ### Installation Options
 
 #### CocoaPods (iOS)
-
 ```ruby
 target '<iOS Target>' do
     platform :ios, '12.0'
@@ -71,15 +70,12 @@ end
 ```
 
 #### Carthage (iOS)
-
-```zsh
+```
 binary "https://code.videolan.org/videolan/VLCKit/raw/master/Packaging/MobileVLCKit.json" ~> 3.3.0
 ```
 
 #### Manual Framework
-
 Download the framework from VideoLAN releases and place it in your project:
-
 - iOS: `MobileVLCKit.framework`
 - macOS: `VLCKit.framework`
 - tvOS: `TVVLCKit.framework`
@@ -91,7 +87,6 @@ The Makefile uses `-framework MobileVLCKit` for iOS builds. Ensure the framework
 ### Required Headers
 
 Framework stubs for IntelliSense are in `../include/vlckit/`:
-
 - `MobileVLCKit.h` - iOS framework stub
 - `VLCKit.h` - macOS framework stub
 - `TVVLCKit.h` - tvOS framework stub

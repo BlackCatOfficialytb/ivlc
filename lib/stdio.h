@@ -2,6 +2,11 @@
 #ifndef _STDIO_H
 #define _STDIO_H
 
+/* On Apple platforms, include the real stdio.h */
+#if defined(__APPLE__) || defined(__MACH__)
+#include <stdio.h>
+#else
+
 #include <stddef.h>
 
 #ifdef __cplusplus
@@ -9,6 +14,7 @@ extern "C" {
 #endif
 
 typedef struct _IO_FILE FILE;
+typedef long fpos_t;
 
 extern FILE *stdin;
 extern FILE *stdout;
@@ -58,10 +64,12 @@ char *tmpnam(char *s);
 int feof(FILE *stream);
 int ferror(FILE *stream);
 void clearerr(FILE *stream);
+
 int fileno(FILE *stream);
 
 #ifdef __cplusplus
 }
 #endif
 
+#endif /* __APPLE__ || __MACH__ */
 #endif /* _STDIO_H */

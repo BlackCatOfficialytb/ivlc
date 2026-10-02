@@ -2,6 +2,11 @@
 #ifndef _STRING_H
 #define _STRING_H
 
+/* On Apple platforms, include the real string.h */
+#if defined(__APPLE__) || defined(__MACH__)
+#include <string.h>
+#else
+
 #include <stddef.h>
 
 #ifdef __cplusplus
@@ -40,4 +45,5 @@ void *memchr(const void *s, int c, size_t n);
 }
 #endif
 
+#endif /* __APPLE__ || __MACH__ */
 #endif /* _STRING_H */
